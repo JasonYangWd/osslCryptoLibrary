@@ -416,7 +416,11 @@ osslOcspClient::validateOrThrow(const osslCertificate& cert) const
         if (result.revokedAt)
         {
             struct tm utc {};
+#if defined(_WIN32)
+            gmtime_s(&utc, &result.revokedAt);
+#else
             gmtime_r(&result.revokedAt, &utc);
+#endif
             char buf[32];
             std::strftime(buf, sizeof(buf), " at %Y-%m-%dT%H:%M:%SZ", &utc);
             oss << buf;

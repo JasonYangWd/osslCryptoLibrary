@@ -7,7 +7,11 @@ static std::string fmtTime(std::time_t t)
 {
     if (!t) return "(none)";
     struct tm utc {};
+#if defined(_WIN32)
+    gmtime_s(&utc, &t);
+#else
     gmtime_r(&t, &utc);
+#endif
     char buf[32];
     std::strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%SZ", &utc);
     return buf;
